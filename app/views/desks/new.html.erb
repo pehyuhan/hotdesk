@@ -1,0 +1,34 @@
+<%= form_for @desk do |f| %>
+
+  <div class='form-group'>
+  <%= f.label :desk_type %><br />
+  <%= f.text_field :desk_type, class: 'form-control' %>
+  </div>
+
+  <div class='form-group'>
+  <%= f.label :status %><br />
+  <%= f.text_field :status, class:  'form-control' %>
+  </div>
+
+  <div class='form-group'>
+  <%= f.label :wing %><br />
+  <%= f.text_field :wing, class:  'form-control' %>
+  </div>
+
+  <div class='form-group'>
+  <%= f.label :section %><br />
+  <%= f.text_field :section, class:  'form-control' %>
+  </div>
+
+  <div class='form-group'>
+  <%= f.label :number %><br />
+  <%= f.number_field :number, class:  'form-control' %>
+  </div>
+
+  <br />
+
+  <div>
+  <%= f.submit class: 'btn btn-success'%>
+  </div>
+
+<% end %>

@@ -1,0 +1,23 @@
+<table>
+  <thead>
+    <tr>
+      <th>Desk_type</th>
+      <th>Status</th>
+      <th>Wing</th>
+      <th>Section</th>
+      <th>Number</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <% Desk.all.each do |d| %>
+      <tr>
+        <td><%= d.desk_type %></td>
+        <td><%= d.status %></td>
+        <td><%= d.wing %></td>
+        <td><%= d.section %></td>
+        <td><%= d.number %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
