@@ -11,7 +11,16 @@ Rails.application.routes.draw do
   end
 
   devise_for :users
- 
-  resources :desks
-  resources :bookings
+  
+  namespace :admin do
+    resources :desks
+  end
+
+  resources :users do
+    resources :bookings do
+      collection do
+        post :book
+      end
+    end
+  end
 end

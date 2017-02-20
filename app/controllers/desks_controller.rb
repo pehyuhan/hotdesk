@@ -1,10 +1,18 @@
 class DesksController < ApplicationController
+	before_filter :authenticate_user!
+ 	before_filter do 
+    	redirect_to new_user_session_path unless current_user && current_user.admin?
+  	end
+
+  	def admin?
+  		self.admin == true
+	end
+
 	def index
 		@desks = Desk.all
 	end
 
 	def new
-		redirect_to root_path unless current_user
 		@desk = Desk.new
 	end
 
