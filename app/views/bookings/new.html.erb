@@ -19,7 +19,6 @@
 <br />
 6. Mark selected desk as occupied (Desk.status)
 <br />
-7. Active bookings of user = +
 
 <%= form_tag book_user_bookings_path, multipart: true do %>
 
@@ -34,6 +33,11 @@
   </div>
 
   <div class='form-group'>
+  <%= label_tag :desk_id %><br />
+  <%= number_field_tag :desk_id, class:  'form-control' %>
+  </div>
+
+<!--   <div class='form-group'>
   <%= fields_for :wing do %>	
   <%= label_tag :wing %><br />
   <%= text_field :wing, class: 'form-control'%>
@@ -52,7 +56,7 @@
   <%= label_tag :number %><br />
   <%= text_field :number, class: 'form-control'%>
   <% end %>
-  </div>
+  </div> -->
 
   <br />
 

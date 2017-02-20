@@ -10,6 +10,18 @@ class BookingsController < ApplicationController
 	def book
 		user_name = current_user.name
 		user_id = current_user.id
+
+		counter = 0
+
+		Booking.all.each do |b|
+			b.user_id == current_user.id
+			counter = counter + 1
+		end
+		
+		if counter > 500
+			puts 'Too many bookings!'
+		else
+
 		nature_of_job = current_user.nature_of_job
 
 		a = params[:book_from] || {}
@@ -24,39 +36,62 @@ class BookingsController < ApplicationController
 		end_date = Date.parse(book_to)
 		duration = (end_date - start_date).to_i
 
-		if current_user.nature_of_job == 'Flexible' && duration < 8 || current_user.nature_of_job == 'Project-Based' && duration < 180
+		e = params[:desk_id] || {}
 
-		Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to)
+		f = Booking.where(desk_id: e).pluck(:book_from)
+		booked_start_date = f[0]
+		g = Booking.where(desk_id: e).pluck(:book_to)
+		booked_end_date = g[0]
 
+		if (start_date - booked_end_date)*(booked_start_date - end_date) >=0
+			puts 'overlap'
+		elsif
+			current_user.nature_of_job == 'Flexible' && duration < 8 || current_user.nature_of_job == 'Project-Based' && duration < 180
+			Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to, :desk_id=>e)
 		else
-			puts "too long"
+			puts "Duration too long!"
 		end
 
-		e = params[:wing] || {}
-		f = e.values
-		wing = f[0]
+		# f = Desk.where(id: e).pluck(:wing)
+		# ff = f[0]
+		# g = Desk.where(id: e).pluck(:section)
+		# gg = g[0]
+		# h = Desk.where(id: e).pluck(:number)
+		# hh = h[0]
+		# i = ff.to_s + gg.to_s + hh.to_s
+		# puts i
 
-		g = params[:section] || {}
-		h = g.values
-		section = h[0]
+		Desk.all.each do |d|
 
-		i = params[:number] || {}
-		j = i.values
-		number = j[0]
+			# a = d.wing
+			# b = d.section
+			# c = d.number
+			# d = a.to_s + b.to_s + c.to_s
 
-		desk_number = wing + section + number
+			# if d == 'available'
+			# 	puts 'available'
+			# else
+			# 	puts 'unavailable'
+			# end
+		end
 
-		puts desk_number
+		# e = params[:wing] || {}
+		# f = e.values
+		# wing = f[0]
 
-		# counter = {}
+		# g = params[:section] || {}
+		# h = g.values
+		# section = h[0]
 
-		# Booking.all.each do |b|
-		# 	if b.user_id == current_user.id
-		# 		puts "true"
-		# 	else
-		# 		puts "false"
-		# 	end
-		# end
+		# i = params[:number] || {}
+		# j = i.values
+		# number = j[0]
+
+		# desk_number = wing + section + number
+
+		# puts desk_number
+	end
+
 	end
 
 	def show
