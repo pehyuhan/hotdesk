@@ -68,10 +68,16 @@ class BookingsController < ApplicationController
 				nn = n[0]
 				o = ll.to_s + mm.to_s + nn.to_s
 				desk.delete(o)
-				puts desk
 			else
 				puts 'No available desks!'
 			end
+		end
+
+		p = desk.length
+		AvailableDesk.delete_all
+		(0..(p-1)).each do |i|
+		desk_name = desk[i]
+		AvailableDesk.create(:desk_name=>desk_name)
 		end
 
 		# e = params[:desk_id] || {}
