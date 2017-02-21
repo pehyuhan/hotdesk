@@ -36,21 +36,65 @@ class BookingsController < ApplicationController
 		end_date = Date.parse(book_to)
 		duration = (end_date - start_date).to_i
 
-		e = params[:desk_id] || {}
+		desk_id = params[:desk_id] || {}
 
-		f = Booking.where(desk_id: e).pluck(:book_from)
-		booked_start_date = f[0]
-		g = Booking.where(desk_id: e).pluck(:book_to)
-		booked_end_date = g[0]
-
-		if (start_date - booked_end_date)*(booked_start_date - end_date) >=0
-			puts 'overlap'
-		elsif
-			current_user.nature_of_job == 'Flexible' && duration < 8 || current_user.nature_of_job == 'Project-Based' && duration < 180
-			Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to, :desk_id=>e)
+		if current_user.nature_of_job == 'Flexible' && duration < 8 || current_user.nature_of_job == 'Project-Based' && duration < 180
+			Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to, :desk_id=>desk_id)
 		else
 			puts "Duration too long!"
 		end
+
+		#check availability
+		desk = []
+		Desk.all.each do |e|
+		f = e.wing
+		g = e.section
+		h = e.number
+		j = f.to_s + g.to_s + h.to_s
+		desk.push(j)
+		end
+		puts desk
+
+		Booking.all.each do |k|
+			booked_start_date = k.book_from
+			booked_end_date = k.book_to
+			desk_id = k.desk_id
+			if (start_date - booked_end_date)*(booked_start_date - end_date) <=0
+				l = Desk.where(id: desk_id).pluck(:wing)
+				ll = l[0]
+				m = Desk.where(id: desk_id).pluck(:section)
+				mm = m[0]
+				n = Desk.where(id: desk_id).pluck(:number)
+				nn = n[0]
+				o = ll.to_s + mm.to_s + nn.to_s
+				desk.delete(o)
+				puts desk
+			else
+				puts 'No available desks!'
+			end
+		end
+
+		# e = params[:desk_id] || {}
+
+		# f = Booking.all.where(desk_id: e).pluck(:book_from)
+		# ff = f.length
+		# all_booked_start_date = f[0..(ff-1)]
+		# g = Booking.all.where(desk_id: e).pluck(:book_to)
+		# all_booked_end_date = g[0..(ff-1)]
+
+		# (0..(ff-1)).each do |i|
+		# 	booked_start_date = all_booked_start_date[i]
+		# 	booked_end_date = all_booked_end_date[i]
+		# 	if (start_date - booked_end_date)*(booked_start_date - end_date) >=0
+		# 		a = Desk.where(id: e).pluck(:wing)
+		# 		puts a
+		# 	elsif
+		# 		current_user.nature_of_job == 'Flexible' && duration < 8 || current_user.nature_of_job == 'Project-Based' && duration < 180
+		# 		Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to, :desk_id=>e)
+		# 	else
+		# 		puts "Duration too long!"
+		# 	end
+		# end
 
 		# f = Desk.where(id: e).pluck(:wing)
 		# ff = f[0]
