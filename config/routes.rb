@@ -12,9 +12,7 @@ Rails.application.routes.draw do
 
   devise_for :users
   
-  namespace :admin do
-    resources :desks
-  end
+  resources :desks
 
   resources :users do
     resources :bookings do
