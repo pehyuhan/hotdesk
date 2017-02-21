@@ -62,3 +62,16 @@
 
   <%= submit_tag "Book", class: "btn btn-default" %>
   <% end %>
+
+  Desk Available:
+  <br />
+  <%= @desk %>
+
+  <h1> Bookings </h1>
+  <% Booking.all.each do |booking| %>
+    <%= booking.user_name %>
+    <%= booking.book_from %>
+    <%= booking.book_to %>
+    <%= booking.desk_id %>
+    <br />
+  <% end %>
