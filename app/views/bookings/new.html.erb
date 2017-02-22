@@ -6,7 +6,7 @@
 	<br />
 	Project-Based: max 6 months
 	<br />
-	Fixed: max 1 year
+	Fixed: no limit
 <br />
 2. Check if user have more than 2 active bookings
 	Go thru bookings table and check current_user(user_id) > 2
@@ -18,6 +18,24 @@
 5. Book selected desk
 <br />
 6. Mark selected desk as occupied (Desk.status)
+<br />
+
+<%= form_tag check_availability_user_bookings_path, multipart: true do %> 
+
+  <div class='form-group'>
+  <%= label_tag :book_from %><br />
+  <%= date_select :book_from, class:  'form-control' %>
+  </div>
+
+  <div class='form-group'>
+  <%= label_tag :book_to %><br />
+  <%= date_select :book_to, class:  'form-control' %>
+  </div>
+
+  <%= submit_tag "Check Availability", class: "btn btn-default" %>
+  <% end %>
+
+<br />
 <br />
 
 <%= form_tag book_user_bookings_path, multipart: true do %>
@@ -37,31 +55,32 @@
   <%= number_field_tag :desk_id, class:  'form-control' %>
   </div>
 
-<!--   <div class='form-group'>
-  <%= fields_for :wing do %>	
-  <%= label_tag :wing %><br />
-  <%= text_field :wing, class: 'form-control'%>
-  <% end %>
-  </div>
-
-  <div class='form-group'>
-  <%= fields_for :section do %>	
-  <%= label_tag :section %><br />
-  <%= text_field :section, class: 'form-control'%>
-  <% end %>
-  </div>
-
-  <div class='form-group'>
-  <%= fields_for :number do %>	
-  <%= label_tag :number %><br />
-  <%= text_field :number, class: 'form-control'%>
-  <% end %>
-  </div> -->
-
   <br />
 
   <%= submit_tag "Book", class: "btn btn-default" %>
   <% end %>
+
+  <br />
+
+<!--   <%= form_for new_user_booking_path do |f| %>
+
+  <div class="form-group">
+   <%= f.collection_radio_buttons :desk_name, AvailableDesk.all, :id, :desk_name %>
+   <%= f.submit %>
+  </div>
+  <% end %> -->
+<%= form_for selection_user_bookings_path do |f| %>
+<%= collection_radio_buttons(:selection, :selected_desk, AvailableDesk.all, :id, :desk_name) do |b| %>
+  <div class="selection">
+     <%= b.label do %>
+      <%= b.radio_button + b.text %>
+     <% end %>
+  </div>
+<% end %>
+<%= f.submit %>
+<% end %>
+
+
 
   <h1> Available Desks </h1>
   <% AvailableDesk.all.each do |ad| %>

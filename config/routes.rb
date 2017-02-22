@@ -17,7 +17,9 @@ Rails.application.routes.draw do
   resources :users do
     resources :bookings do
       collection do
+        post :check_availability
         post :book
+        post :selection
       end
     end
   end
