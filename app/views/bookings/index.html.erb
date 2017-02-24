@@ -1,12 +1,25 @@
-<p>Name of current user:</p>
-<%= current_user.name %>
-<p>Title of user:</p>
-<%= current_user.title %>
-<p>Department of user:</p>
-<%= current_user.department %>
+<div class='col-sm-6 col-sm-offset-3'>
+	<h1><%= current_user.name %></h1>
+	<h3><%= current_user.title %></h3>
+	<h3><%= current_user.department %></h3>
+	<br />
+</div>
 
-<h3>Today's desk is wing/section/number</h3>
+<div class='col-sm-6 col-sm-offset-3'>
+	<div class="today-desk">
+	Today's desk is <%= Booking.today_desk %>
+</div>
+</div>
 
-<p>Desk Schedule</p>
-<p>dd/mm/yyyy-dd/mm/yyyy : wing/section/number</p>
-<p>dd/mm/yyyy-dd/mm/yyyy : wing/section/number</p>
+<br />
+
+<div class='col-sm-6 col-sm-offset-3'>
+	<br />
+	<h3>Desk Schedule</h3>
+		<div class="desk-schedule">
+			<% Booking.desk_schedule.each do |i| %>
+			<%= i.book_from %> <a style= "color: #ce424f">to</a> <%= i.book_to %> <a style= "color: #FFFFFF">--------------</a> desk_id: <%= i.desk_id %>
+			<br />
+			<% end %>
+		</div>
+</div>

@@ -1,72 +1,74 @@
 class BookingsController < ApplicationController
 	def index
-		@bookings = Booking.all
+		a = Booking.where(user_id: current_user.id).pluck(:book_from)
+		(0..(a.length-1)).each do |i|
+			@bookings_from = a[i]
+		end
+
+		b = Booking.where(user_id: current_user.id).pluck(:book_to)
+		(0..(b.length-1)).each do |j|
+			@bookings_to = b[j]
+		end
 	end
 
 	def new
 		@booking = Booking.new
-		@selection = Selection.new
-	end
-
-	def selection
-		@selection = Selection.new
 	end
 
 	def check_availability
-		user_name = current_user.name
+		@check_availability = Booking.new(booking_params)
+		# user_name = current_user.name
 
-		a = params[:book_from] || {}
-		b = a.values
-		book_from = b[2] + '/' + b[1] + '/' + b[0]
+		# a = params[:book_from] || {}
+		# b = a.values
+		# book_from = b[2] + '/' + b[1] + '/' + b[0]
 
-		c = params[:book_to] || {}
-		d = c.values
-		book_to = d[2] + '/' + d[1] + '/' + d[0]
+		# c = params[:book_to] || {}
+		# d = c.values
+		# book_to = d[2] + '/' + d[1] + '/' + d[0]
 
-		start_date = Date.parse(book_from)
-		end_date = Date.parse(book_to)
-		duration = (end_date - start_date).to_i
+		# start_date = Date.parse(book_from)
+		# end_date = Date.parse(book_to)
+		# duration = (end_date - start_date).to_i
 
-		if current_user.nature_of_job == 'Flexible' && duration > 7 || current_user.nature_of_job == 'Project-Based' && duration > 179
-			puts "Duration too long!"
-		end
+		# if current_user.nature_of_job == 'Flexible' && duration > 7 || current_user.nature_of_job == 'Project-Based' && duration > 179
+		# 	puts "Duration too long!"
+		# end
 
-		desk = []
-		Desk.all.each do |e|
-		f = e.wing
-		g = e.section
-		h = e.number
-		j = f.to_s + g.to_s + h.to_s
-		desk.push(j)
-		end
-		puts desk
+		# desk = []
+		# Desk.all.each do |e|
+		# f = e.wing
+		# g = e.section
+		# h = e.number
+		# j = f.to_s + g.to_s + h.to_s
+		# desk.push(j)
+		# end
 
-		Booking.all.each do |k|
-			booked_start_date = k.book_from
-			booked_end_date = k.book_to
-			desk_id = k.desk_id
-			if (start_date - booked_end_date)*(booked_start_date - end_date) <=0
-				l = Desk.where(id: desk_id).pluck(:wing)
-				ll = l[0]
-				m = Desk.where(id: desk_id).pluck(:section)
-				mm = m[0]
-				n = Desk.where(id: desk_id).pluck(:number)
-				nn = n[0]
-				o = ll.to_s + mm.to_s + nn.to_s
-				desk.delete(o)
-			else
-				puts 'No available desks!'
-			end
-		end
+		# Booking.all.each do |k|
+		# 	booked_start_date = k.book_from
+		# 	booked_end_date = k.book_to
+		# 	desk_id = k.desk_id
+		# 	if (start_date - booked_end_date)*(booked_start_date - end_date) <=0
+		# 		l = Desk.where(id: desk_id).pluck(:wing)
+		# 		ll = l[0]
+		# 		m = Desk.where(id: desk_id).pluck(:section)
+		# 		mm = m[0]
+		# 		n = Desk.where(id: desk_id).pluck(:number)
+		# 		nn = n[0]
+		# 		o = ll.to_s + mm.to_s + nn.to_s
+		# 		desk.delete(o)
+		# 	else
+		# 		puts 'No available desks!'
+		# 	end
+		# end
 
-		p = desk.length
-		AvailableDesk.delete_all
-		(0..(p-1)).each do |i|
-		desk_name = desk[i]
-		AvailableDesk.create(:desk_name=>desk_name)
-		end
+		# p = desk.length
+		# (0..(p-1)).each do |i|
+		# desk_name = desk[i]
+		# desk.push(desk_name)
+		# end
 
-		redirect_back(fallback_location: book_user_bookings_path)
+		# redirect_back(fallback_location: book_user_bookings_path)
 	end
 
 	def book
@@ -117,7 +119,6 @@ class BookingsController < ApplicationController
 		j = f.to_s + g.to_s + h.to_s
 		desk.push(j)
 		end
-		puts desk
 
 		Booking.all.each do |k|
 			booked_start_date = k.book_from
@@ -138,10 +139,9 @@ class BookingsController < ApplicationController
 		end
 
 		p = desk.length
-		AvailableDesk.delete_all
 		(0..(p-1)).each do |i|
 		desk_name = desk[i]
-		AvailableDesk.create(:desk_name=>desk_name)
+		desk.push(desk_name)
 		end
 
 		redirect_back(fallback_location: book_user_bookings_path)
@@ -212,6 +212,12 @@ class BookingsController < ApplicationController
 
 	def show
 		@booking = Booking.find(params[:id])
+	end
+
+	private
+
+	def booking_params
+		params.permit(:book_from, :book_to, :wing, :section, :number)
 	end
 
 end

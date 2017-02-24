@@ -1,0 +1,52 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+
+/* typography */
+
+h1, h2, h3, h4, h5, h6, {
+  font-family: Tahoma;
+  line-height: 1;
+}
+
+h1 {
+  font-size: 3em;
+  letter-spacing: -2px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+h3 {
+  font-size: 1.5em;
+  text-align: left;
+  font-weight: normal;
+  color: #777;
+}
+
+.float-none {
+  float: none;
+}
+
+.panel-heading {
+  padding: 15px;
+  h4 {
+    margin: 0px;
+  }
+}
+
+.today-desk {
+	background-color: #e35062;
+	padding: 10px;
+	color: #f9f9f9;
+	text-align: center;
+	font-size: 20px;
+	font-family: arial;
+	vertical-align: bottom;
+}
+
+.desk-schedule {
+	font-size: 20px;
+}

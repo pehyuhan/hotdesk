@@ -1,19 +1,4 @@
 <br />
-1. Check user nature_of_job (Fixed/Project/Flexi)
-	current_user(nature_of_job) = ?
-	<br />
-	Flexible: max 1 week
-	<br />
-	Project-Based: max 6 months
-	<br />
-	Fixed: no limit
-<br />
-2. Check if user have more than 2 active bookings
-	Go thru bookings table and check current_user(user_id) > 2
-<br />
-3. Choose date range (filter)
-<br />
-4. Show available desks (list)
 <br />
 5. Book selected desk
 <br />
@@ -62,31 +47,8 @@
 
   <br />
 
-<!--   <%= form_for new_user_booking_path do |f| %>
+  <% @desk %>
 
-  <div class="form-group">
-   <%= f.collection_radio_buttons :desk_name, AvailableDesk.all, :id, :desk_name %>
-   <%= f.submit %>
-  </div>
-  <% end %> -->
-<%= form_for selection_user_bookings_path do |f| %>
-<%= collection_radio_buttons(:selection, :selected_desk, AvailableDesk.all, :id, :desk_name) do |b| %>
-  <div class="selection">
-     <%= b.label do %>
-      <%= b.radio_button + b.text %>
-     <% end %>
-  </div>
-<% end %>
-<%= f.submit %>
-<% end %>
-
-
-
-  <h1> Available Desks </h1>
-  <% AvailableDesk.all.each do |ad| %>
-    <%= ad.desk_name %>
-    <br />
-  <% end %>
 
    <h1> Bookings </h1>
   <% Booking.all.each do |booking| %>
