@@ -26,6 +26,12 @@ h3 {
   color: #777;
 }
 
+.not-bold {
+  font-size: 1.2em;
+  color: #777;
+  font-weight: normal!important;
+}
+
 .float-none {
   float: none;
 }
@@ -49,4 +55,36 @@ h3 {
 
 .desk-schedule {
 	font-size: 20px;
+}
+
+span.tab-space {padding-left:5em;}
+
+.date-select {
+  font-size: 1em;
+}
+
+.btn {
+  background-color: #e35062;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: 0 none;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.button {
+  background-color: #f8e8db;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: 0 none;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 5px;
+}
+
+.list {
+  font-size: 1em;
+
 }

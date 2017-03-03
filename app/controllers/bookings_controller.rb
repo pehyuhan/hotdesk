@@ -16,62 +16,6 @@ class BookingsController < ApplicationController
 	end
 
 	def check_availability
-		@check_availability = Booking.new(booking_params)
-		# user_name = current_user.name
-
-		# a = params[:book_from] || {}
-		# b = a.values
-		# book_from = b[2] + '/' + b[1] + '/' + b[0]
-
-		# c = params[:book_to] || {}
-		# d = c.values
-		# book_to = d[2] + '/' + d[1] + '/' + d[0]
-
-		# start_date = Date.parse(book_from)
-		# end_date = Date.parse(book_to)
-		# duration = (end_date - start_date).to_i
-
-		# if current_user.nature_of_job == 'Flexible' && duration > 7 || current_user.nature_of_job == 'Project-Based' && duration > 179
-		# 	puts "Duration too long!"
-		# end
-
-		# desk = []
-		# Desk.all.each do |e|
-		# f = e.wing
-		# g = e.section
-		# h = e.number
-		# j = f.to_s + g.to_s + h.to_s
-		# desk.push(j)
-		# end
-
-		# Booking.all.each do |k|
-		# 	booked_start_date = k.book_from
-		# 	booked_end_date = k.book_to
-		# 	desk_id = k.desk_id
-		# 	if (start_date - booked_end_date)*(booked_start_date - end_date) <=0
-		# 		l = Desk.where(id: desk_id).pluck(:wing)
-		# 		ll = l[0]
-		# 		m = Desk.where(id: desk_id).pluck(:section)
-		# 		mm = m[0]
-		# 		n = Desk.where(id: desk_id).pluck(:number)
-		# 		nn = n[0]
-		# 		o = ll.to_s + mm.to_s + nn.to_s
-		# 		desk.delete(o)
-		# 	else
-		# 		puts 'No available desks!'
-		# 	end
-		# end
-
-		# p = desk.length
-		# (0..(p-1)).each do |i|
-		# desk_name = desk[i]
-		# desk.push(desk_name)
-		# end
-
-		# redirect_back(fallback_location: book_user_bookings_path)
-	end
-
-	def book
 		#check active bookings
 		user_name = current_user.name
 		user_id = current_user.id
@@ -79,39 +23,44 @@ class BookingsController < ApplicationController
 		counter = 0
 
 		Booking.all.each do |b|
-			b.user_id == current_user.id
-			counter = counter + 1
+			current_date = Date.today
+			booked_start_date = b.book_from
+			booked_end_date = b.book_to
+			if b.user_id == current_user.id && current_date <= booked_end_date && booked_start_date <= current_date
+				counter = counter + 1
+			end
 		end
-		
-		if counter > 500
-			puts 'Too many bookings!'
-		else
 
-		#check nature_of_job
+		if counter > 1
+			flash[:alert] = 'Too many active bookings!'
+			redirect_back(fallback_location: book_user_bookings_path)
+			return false
+		end
+
 		nature_of_job = current_user.nature_of_job
 
-		a = params[:book_from] || {}
-		b = a.values
-		book_from = b[2] + '/' + b[1] + '/' + b[0]
+		book_from_date = params[:book_from]
+		book_from = Date.new book_from_date["{:class=>%22form-control%22}(1i)"].to_i, book_from_date["{:class=>%22form-control%22}(2i)"].to_i, book_from_date["{:class=>%22form-control%22}(3i)"].to_i
+		
+		if Date.today > book_from
+			flash[:alert] = 'Invalid Date!'
+			redirect_back(fallback_location: book_user_bookings_path)
+			return false
+		end
+		
+		book_to_date = params[:book_to]
+		book_to = Date.new book_to_date["{:class=>%22form-control%22}(1i)"].to_i, book_to_date["{:class=>%22form-control%22}(2i)"].to_i, book_to_date["{:class=>%22form-control%22}(3i)"].to_i
 
-		c = params[:book_to] || {}
-		d = c.values
-		book_to = d[2] + '/' + d[1] + '/' + d[0]
+		duration = (book_to - book_from).to_i
 
-		start_date = Date.parse(book_from)
-		end_date = Date.parse(book_to)
-		duration = (end_date - start_date).to_i
-
-		desk_id = params[:desk_id] || {}
-
-		if current_user.nature_of_job == 'Flexible' && duration < 8 || current_user.nature_of_job == 'Project-Based' && duration < 180
-			Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to, :desk_id=>desk_id)
-		else
-			puts "Duration too long!"
+		if current_user.nature_of_job == 'Flexible' && duration > 7 || current_user.nature_of_job == 'Project-Based' && duration > 179
+			flash[:alert] = 'Duration too long!'
+			redirect_back(fallback_location: book_user_bookings_path)
+			return false
 		end
 
-		#check availability
 		desk = []
+
 		Desk.all.each do |e|
 		f = e.wing
 		g = e.section
@@ -124,7 +73,7 @@ class BookingsController < ApplicationController
 			booked_start_date = k.book_from
 			booked_end_date = k.book_to
 			desk_id = k.desk_id
-			if (start_date - booked_end_date)*(booked_start_date - end_date) <=0
+			if book_from <= booked_end_date && booked_start_date <= book_to
 				l = Desk.where(id: desk_id).pluck(:wing)
 				ll = l[0]
 				m = Desk.where(id: desk_id).pluck(:section)
@@ -133,85 +82,57 @@ class BookingsController < ApplicationController
 				nn = n[0]
 				o = ll.to_s + mm.to_s + nn.to_s
 				desk.delete(o)
-			else
-				puts 'No available desks!'
 			end
 		end
 
-		p = desk.length
-		(0..(p-1)).each do |i|
-		desk_name = desk[i]
-		desk.push(desk_name)
-		end
+		@available_desks = desk
+		@booking_date = "#{book_from} - #{book_to}"
+		@@book_from = book_from
+		@@book_to = book_to
+
+	end
+
+	def book
+		@booking = Booking.new
+		user_name = current_user.name
+		user_id = current_user.id
+
+		desk_name = params[:desk_name]
+		a = desk_name.split('')
+		wing = a[0]
+		section = a[1]
+		number = a[2] 
+		did = Desk.where(wing: wing, section: section, number: number).pluck(:id)
+		desk_id = did[0]
+
+		book_from = @@book_from
+		book_to = @@book_to
+
+		Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>@@book_from, :book_to=>@@book_to, :desk_id=>desk_id)
 
 		redirect_back(fallback_location: book_user_bookings_path)
-
-		# e = params[:desk_id] || {}
-
-		# f = Booking.all.where(desk_id: e).pluck(:book_from)
-		# ff = f.length
-		# all_booked_start_date = f[0..(ff-1)]
-		# g = Booking.all.where(desk_id: e).pluck(:boo  k_to)
-		# all_booked_end_date = g[0..(ff-1)]
-
-		# (0..(ff-1)).each do |i|
-		# 	booked_start_date = all_booked_start_date[i]
-		# 	booked_end_date = all_booked_end_date[i]
-		# 	if (start_date - booked_end_date)*(booked_start_date - end_date) >=0
-		# 		a = Desk.where(id: e).pluck(:wing)
-		# 		puts a
-		# 	elsif
-		# 		current_user.nature_of_job == 'Flexible' && duration < 8 || current_user.nature_of_job == 'Project-Based' && duration < 180
-		# 		Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to, :desk_id=>e)
-		# 	else
-		# 		puts "Duration too long!"
-		# 	end
-		# end
-
-		# f = Desk.where(id: e).pluck(:wing)
-		# ff = f[0]
-		# g = Desk.where(id: e).pluck(:section)
-		# gg = g[0]
-		# h = Desk.where(id: e).pluck(:number)
-		# hh = h[0]
-		# i = ff.to_s + gg.to_s + hh.to_s
-		# puts i
-
-		# Desk.all.each do |d|
-
-		# 	# a = d.wing
-		# 	# b = d.section
-		# 	# c = d.number
-		# 	# d = a.to_s + b.to_s + c.to_s
-
-		# 	# if d == 'available'
-		# 	# 	puts 'available'
-		# 	# else
-		# 	# 	puts 'unavailable'
-		# 	# end
-		# end
-
-		# e = params[:wing] || {}
-		# f = e.values
-		# wing = f[0]
-
-		# g = params[:section] || {}
-		# h = g.values
-		# section = h[0]
-
-		# i = params[:number] || {}
-		# j = i.values
-		# number = j[0]
-
-		# desk_number = wing + section + number
-
-		# puts desk_number
 	end
 
-	end
+	 def create
+      @booking = current_user.bookings.build(booking_params)
+      if @booking.save
+        flash[:success] = "Booking sucessful!"
+        redirect_to @booking
+      else
+        render :book #'static_pages/home'
+      end
+    end
 
 	def show
-		@booking = Booking.find(params[:id])
+
+	end
+
+	def destroy
+	    redirect_to unauthenticated_root_path unless current_user
+
+	    @booking = Booking.find(params[:id])
+	    @booking.destroy
+
 	end
 
 	private

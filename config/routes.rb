@@ -19,7 +19,6 @@ Rails.application.routes.draw do
       collection do
         post :check_availability
         post :book
-        post :selection
       end
     end
   end
