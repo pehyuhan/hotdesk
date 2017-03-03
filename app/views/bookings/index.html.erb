@@ -1,12 +1,41 @@
-<p>Name of current user:</p>
-<%= current_user.name %>
-<p>Title of user:</p>
-<%= current_user.title %>
-<p>Department of user:</p>
-<%= current_user.department %>
+<br />
 
-<h3>Today's desk is wing/section/number</h3>
+<div class='col-sm-6 col-sm-offset-3'>
+	<h1><%= current_user.name %></h1>
+	<h3><%= current_user.title %></h3>
+	<h3><%= current_user.department %></h3>
+	<br />
+</div>
 
-<p>Desk Schedule</p>
-<p>dd/mm/yyyy-dd/mm/yyyy : wing/section/number</p>
-<p>dd/mm/yyyy-dd/mm/yyyy : wing/section/number</p>
+<div class='col-sm-6 col-sm-offset-3'>
+	<div class="today-desk">
+	Today's desk is <%= Booking.today_desk %>
+</div>
+</div>
+
+<br />
+
+<div class='col-sm-6 col-sm-offset-3'>
+	<br />
+	<h3>Desk Schedule</h3>
+		<div class="desk-schedule">
+			<% Booking.desk_schedule.each do |a, b, c| %>
+			<%= "#{a} - #{b}" %><span class="tab-space"><%= "#{c}" %></span>
+			&nbsp;
+			<% if current_user %>
+             <% end %><br />
+			<% end %>
+		</div>
+</div>
+
+<div class='col-sm-6 col-sm-offset-3'>
+	<br />
+	<hr />
+    <button type="button" class="button">
+      <%= link_to "My Bookings", authenticated_root_path %>
+    </button>
+    
+    <button type="button" class="button">
+    	<%= link_to "Book Desk", new_user_booking_path(current_user) %>
+    </button>
+</div>

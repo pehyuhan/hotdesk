@@ -1,94 +1,40 @@
-<br />
-1. Check user nature_of_job (Fixed/Project/Flexi)
-	current_user(nature_of_job) = ?
-	<br />
-	Flexible: max 1 week
-	<br />
-	Project-Based: max 6 months
-	<br />
-	Fixed: no limit
-<br />
-2. Check if user have more than 2 active bookings
-	Go thru bookings table and check current_user(user_id) > 2
-<br />
-3. Choose date range (filter)
-<br />
-4. Show available desks (list)
-<br />
-5. Book selected desk
-<br />
-6. Mark selected desk as occupied (Desk.status)
-<br />
+<div class="container-fluid">
+    <div class="row">
+      <div class='col-sm-6 col-sm-offset-3'>
+        <h1>Check Availability</h1><hr />
+      </div>
 
-<%= form_tag check_availability_user_bookings_path, multipart: true do %> 
+      <div class='col-sm-6 col-sm-offset-3'>
+        <%= form_tag check_availability_user_bookings_path, multipart: true do %> 
+          <div class='form-group'>
+            <span class='not-bold'><%= label_tag :book_from, "Book From" %>: </span></br>
+            <span class='date-select'><%= date_select :book_from, class:  'form-control' %></span>
+          </div>
 
-  <div class='form-group'>
-  <%= label_tag :book_from %><br />
-  <%= date_select :book_from, class:  'form-control' %>
-  </div>
+          <div class='form-group'>
+            <span class='not-bold'><%= label_tag :book_to, "Book To" %>: </span><br />
+            <span class='date-select'><%= date_select :book_to, class:  'form-control' %></span>
+          </div>
 
-  <div class='form-group'>
-  <%= label_tag :book_to %><br />
-  <%= date_select :book_to, class:  'form-control' %>
-  </div>
-
-  <%= submit_tag "Check Availability", class: "btn btn-default" %>
-  <% end %>
-
-<br />
-<br />
-
-<%= form_tag book_user_bookings_path, multipart: true do %>
-
-  <div class='form-group'>
-  <%= label_tag :book_from %><br />
-  <%= date_select :book_from, class:  'form-control' %>
-  </div>
-
-  <div class='form-group'>
-  <%= label_tag :book_to %><br />
-  <%= date_select :book_to, class:  'form-control' %>
-  </div>
-
-  <div class='form-group'>
-  <%= label_tag :desk_id %><br />
-  <%= number_field_tag :desk_id, class:  'form-control' %>
-  </div>
+          <%= submit_tag "Check Availability", class: "btn" %>
+          <% end %>
+      </div>
 
   <br />
 
-  <%= submit_tag "Book", class: "btn btn-default" %>
-  <% end %>
+<div class='col-sm-6 col-sm-offset-3'>
+  <br /> 
+  <hr />
+    <button type="button" class="button">
+      <%= link_to "My Bookings", authenticated_root_path %>
+    </button>
+    
+    <button type="button" class="button">
+      <%= link_to "Book Desk", new_user_booking_path(current_user) %>
+    </button>
+</div>
 
-  <br />
-
-<!--   <%= form_for new_user_booking_path do |f| %>
-
-  <div class="form-group">
-   <%= f.collection_radio_buttons :desk_name, AvailableDesk.all, :id, :desk_name %>
-   <%= f.submit %>
-  </div>
-  <% end %> -->
-<%= form_for selection_user_bookings_path do |f| %>
-<%= collection_radio_buttons(:selection, :selected_desk, AvailableDesk.all, :id, :desk_name) do |b| %>
-  <div class="selection">
-     <%= b.label do %>
-      <%= b.radio_button + b.text %>
-     <% end %>
-  </div>
-<% end %>
-<%= f.submit %>
-<% end %>
-
-
-
-  <h1> Available Desks </h1>
-  <% AvailableDesk.all.each do |ad| %>
-    <%= ad.desk_name %>
-    <br />
-  <% end %>
-
-   <h1> Bookings </h1>
+<!-- <h1> Bookings </h1>
   <% Booking.all.each do |booking| %>
     <%= booking.user_name %>
     <%= booking.book_from %>
@@ -96,3 +42,4 @@
     <%= booking.desk_id %>
     <br />
   <% end %>
+</div> -->

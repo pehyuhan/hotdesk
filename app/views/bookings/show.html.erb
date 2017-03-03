@@ -1,6 +1,30 @@
-<p>Name of current user</p>
-<p>Title of user</p>
-<p>Department of user</p>
+<br />
 
-<h3>Desk wing/section/number booked successfully</h3>
-<p>dd/mm/yyyy - dd/mm/yyyy</p>
+<div class='col-sm-6 col-sm-offset-3'>
+	<h1><%= current_user.name %></h1>
+	<h3><%= current_user.title %></h3>
+	<h3><%= current_user.department %></h3>
+	<br />
+</div>
+
+<div class='col-sm-6 col-sm-offset-3'>
+	<div class="today-desk">
+
+</div>
+</div>
+
+<br />
+
+
+
+<div class='col-sm-6 col-sm-offset-3'>
+	<br />
+	<hr />
+    <button type="button" class="button">
+      <%= link_to "My Bookings", authenticated_root_path %>
+    </button>
+    
+    <button type="button" class="button">
+    	<%= link_to "Book Desk", new_user_booking_path(current_user) %>
+    </button>
+</div>
