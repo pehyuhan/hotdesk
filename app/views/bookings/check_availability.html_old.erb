@@ -1,18 +1,18 @@
 <br />
 <div class='col-sm-6 col-sm-offset-3'>
-  <h1>Book Now</h1><hr />
+	<h1>Book Now</h1><hr />
 </div>
 
 <div class='col-sm-6 col-sm-offset-3'>
 
-  <h2>Date Selected</h2>
-  <h3><%= @booking_date %></h3>
-  <br/>
+	<h2>Date Selected</h2>
+	<h3><%= @booking_date %></h3>
+	<br/>
 
-  <%= form_tag user_booking_path, multipart: true do %>
+  <%= form_tag user_bookings_path, multipart: true do %>
 
   <div class='form-group'>
-    <h2>Available Desks</h2>
+  	<h2>Available Desks</h2>
 
     <h3><%= select_tag :desk_name, options_for_select(@available_desks.collect { |value| [ value, value]}) %></h3>
   </div>
@@ -22,10 +22,10 @@
 </div>
 
 <div class='col-sm-6 col-sm-offset-3'>
-  <br />
-  <hr />
-  <button type="button" class="button">
-      <%= link_to "Back", new_user_booking_path(current_user) %>
+	<br />
+	<hr />
+	<button type="button" class="button">
+    	<%= link_to "Back", new_user_booking_path(current_user) %>
     </button>
 
     <button type="button" class="button">

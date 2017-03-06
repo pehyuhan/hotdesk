@@ -1,12 +1,25 @@
 class BookingsController < ApplicationController
-	
 	def index
+		a = Booking.where(user_id: current_user.id).pluck(:book_from)
+		(0..(a.length-1)).each do |i|
+			@bookings_from = a[i]
+		end
+
+		b = Booking.where(user_id: current_user.id).pluck(:book_to)
+		(0..(b.length-1)).each do |j|
+			@bookings_to = b[j]
+		end
+	end
+
+	def new
+		@booking = Booking.new
 	end
 
 	def check_availability
+		#check active bookings
 		user_name = current_user.name
 		user_id = current_user.id
-		
+
 		counter = 0
 
 		Booking.all.each do |b|
@@ -20,14 +33,10 @@ class BookingsController < ApplicationController
 
 		if counter > 1
 			flash[:alert] = 'Too many active bookings!'
-			# redirect_back(fallback_location: check_availability_user_bookings_path)
-			# return false
+			redirect_back(fallback_location: book_user_bookings_path)
+			return false
 		end
 
-		nature_of_job = current_user.nature_of_job
-	end
-
-	def new
 		nature_of_job = current_user.nature_of_job
 
 		book_from_date = params[:book_from]
@@ -35,7 +44,7 @@ class BookingsController < ApplicationController
 		
 		if Date.today > book_from
 			flash[:alert] = 'Invalid Date!'
-			redirect_back(fallback_location: check_availability_user_bookings_path)
+			redirect_back(fallback_location: book_user_bookings_path)
 			return false
 		end
 		
@@ -46,7 +55,7 @@ class BookingsController < ApplicationController
 
 		if current_user.nature_of_job == 'Flexible' && duration > 7 || current_user.nature_of_job == 'Project-Based' && duration > 179
 			flash[:alert] = 'Duration too long!'
-			redirect_back(fallback_location: check_availability_user_bookings_path)
+			redirect_back(fallback_location: book_user_bookings_path)
 			return false
 		end
 
@@ -81,6 +90,13 @@ class BookingsController < ApplicationController
 		@@book_from = book_from
 		@@book_to = book_to
 
+	end
+
+	def book
+		@booking = Booking.new
+		user_name = current_user.name
+		user_id = current_user.id
+
 		desk_name = params[:desk_name]
 		a = desk_name.split('')
 		wing = a[0]
@@ -89,19 +105,34 @@ class BookingsController < ApplicationController
 		did = Desk.where(wing: wing, section: section, number: number).pluck(:id)
 		desk_id = did[0]
 
+		book_from = @@book_from
+		book_to = @@book_to
+
 		Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>@@book_from, :book_to=>@@book_to, :desk_id=>desk_id)
-		puts Booking.id
+
+		redirect_back(fallback_location: book_user_bookings_path)
 	end
 
-	def create
-
-	end
+	 def create
+      @booking = current_user.booking.build(booking_params)
+      if @booking.save
+        flash[:success] = "Booking sucessful!"
+        redirect_to @booking
+      else
+        render :book #'static_pages/home'
+      end
+    end
 
 	def show
-		# @booking = @user.bookings.find(params[:id])
+
 	end
 
 	def destroy
+	    redirect_to unauthenticated_root_path unless current_user
+
+	    @booking = Booking.find(params[:id])
+	    @booking.destroy
+
 	end
 
 	private
@@ -109,4 +140,5 @@ class BookingsController < ApplicationController
 	def booking_params
 		params.permit(:book_from, :book_to, :wing, :section, :number)
 	end
+
 end

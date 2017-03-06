@@ -5,7 +5,7 @@
       </div>
 
       <div class='col-sm-6 col-sm-offset-3'>
-        <%= form_tag new_user_booking_path, multipart: true do %> 
+        <%= form_tag check_availability_user_bookings_path, multipart: true do %> 
           <div class='form-group'>
             <span class='not-bold'><%= label_tag :book_from, "Book From" %>: </span></br>
             <span class='date-select'><%= date_select :book_from, class:  'form-control' %></span>
@@ -33,3 +33,13 @@
       <%= link_to "Book Desk", new_user_booking_path(current_user) %>
     </button>
 </div>
+
+<!-- <h1> Bookings </h1>
+  <% Booking.all.each do |booking| %>
+    <%= booking.user_name %>
+    <%= booking.book_from %>
+    <%= booking.book_to %>
+    <%= booking.desk_id %>
+    <br />
+  <% end %>
+</div> -->
