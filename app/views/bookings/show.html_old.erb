@@ -9,24 +9,13 @@
 
 <div class='col-sm-6 col-sm-offset-3'>
 	<div class="today-desk">
-	Today's desk is <%= Booking.today_desk %>
+
 </div>
 </div>
 
 <br />
 
-<div class='col-sm-6 col-sm-offset-3'>
-	<br />
-	<h3>Desk Schedule</h3>
-		<div class="desk-schedule">
-			<% Booking.desk_schedule.each do |a, b, c| %>
-			<%= "#{a} - #{b}" %><span class="tab-space"><%= "#{c}" %></span>
-			&nbsp;
-			<% if current_user %>
-             <% end %><br />
-			<% end %>
-		</div>
-</div>
+
 
 <div class='col-sm-6 col-sm-offset-3'>
 	<br />
