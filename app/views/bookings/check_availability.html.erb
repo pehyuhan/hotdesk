@@ -5,7 +5,7 @@
       </div>
 
       <div class='col-sm-6 col-sm-offset-3'>
-        <%= form_tag new_user_booking_path, multipart: true do %> 
+        <%= form_tag(new_user_booking_path, method: "get", class: "bookings") do %> 
           <div class='form-group'>
             <span class='not-bold'><%= label_tag :book_from, "Book From" %>: </span></br>
             <span class='date-select'><%= date_select :book_from, class:  'form-control' %></span>

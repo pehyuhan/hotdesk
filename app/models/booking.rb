@@ -3,6 +3,73 @@ class Booking < ApplicationRecord
 	belongs_to :desk, optional: true
 	accepts_nested_attributes_for :desk, allow_destroy: true
 	cattr_accessor :current_user
+	validates :user_id, presence: true
+	validates :book_from, :book_to, presence: true
+
+	def active_bookings
+		counter = 0
+		Booking.all.each do |b|
+			current_date = Date.today
+			booked_start_date = b.book_from
+			booked_end_date = b.book_to
+			if b.user_id == current_user.id && current_date <= booked_end_date && booked_start_date <= current_date
+				counter += 1
+			end
+		end
+		counter
+	end
+
+	def date_range(book_from, book_to)
+		duration = (book_to - book_from).to_i
+		duration += 1
+	end
+
+	def available_desks(book_from, book_to)
+		desk = []
+
+		Desk.all.each do |e|
+		f = e.wing
+		g = e.section
+		h = e.number
+		j = f.to_s + g.to_s + h.to_s
+		desk.push(j)
+		end
+
+		Booking.all.each do |k|
+			booked_start_date = k.book_from
+			booked_end_date = k.book_to
+			desk_id = k.desk_id
+			if book_from <= booked_end_date && booked_start_date <= book_to
+				l = Desk.where(id: desk_id).pluck(:wing)
+				ll = l[0]
+				m = Desk.where(id: desk_id).pluck(:section)
+				mm = m[0]
+				n = Desk.where(id: desk_id).pluck(:number)
+				nn = n[0]
+				o = ll.to_s + mm.to_s + nn.to_s
+				desk.delete(o)
+			end
+		end
+		desk
+	end
+
+	def book_desk(book_from, book_to, desk_name)
+		user_name = current_user.name
+		user_id = current_user.id
+
+		a = desk_name.split('')
+		wing = a[0]
+		section = a[1]
+		number = a[2] 
+		did = Desk.where(wing: wing, section: section, number: number).pluck(:id)
+		desk_id = did[0]
+
+		Booking.create(:user_name=>user_name, :user_id=>user_id, :book_from=>book_from, :book_to=>book_to, :desk_id=>desk_id)
+	end
+
+
+
+
 
 	def self.today_desk
 		Booking.all.each do |k|
@@ -45,37 +112,4 @@ class Booking < ApplicationRecord
 		end
 		return desk_schedule
 	end
-
-	# def self.check_availability(args)
-	# 	args = [book_from, book_to]
-	# 	self.book_from = start_date
-	# 	self.book_to = end_date
-	# 	desk = []
-
-	# 	Desk.all.each do |e|
-	# 	f = e.wing
-	# 	g = e.section
-	# 	h = e.number
-	# 	j = f.to_s + g.to_s + h.to_s
-	# 	desk.push(j)
-	# 	end
-
-	# 	Booking.all.each do |k|
-	# 		booked_start_date = k.book_from
-	# 		booked_end_date = k.book_to
-	# 		desk_id = k.desk_id
-	# 		if (start_date - booked_end_date)*(booked_start_date - end_date) <=0
-	# 			l = Desk.where(id: desk_id).pluck(:wing)
-	# 			ll = l[0]
-	# 			m = Desk.where(id: desk_id).pluck(:section)
-	# 			mm = m[0]
-	# 			n = Desk.where(id: desk_id).pluck(:number)
-	# 			nn = n[0]
-	# 			o = ll.to_s + mm.to_s + nn.to_s
-	# 			desk.delete(o)
-	# 		end
-	# 	end
-	# 	return desk
-	# 	redirect_back(fallback_location: book_user_bookings_path)
-	# end
 end
